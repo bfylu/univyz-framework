@@ -12,6 +12,7 @@ public final class ArrayUtil {
 
     /**
      * 判断数组是否非空
+     *
      */
     public static boolean isNotEmpty(Object[] array) {
         return  !ArrayUtils.isEmpty(array);

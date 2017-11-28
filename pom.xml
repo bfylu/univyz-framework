@@ -6,7 +6,7 @@
 
     <groupId>cn.univyz</groupId>
     <artifactId>univyz-framework</artifactId>
-    <version>1.0.0</version>
+    <version>1.1.5</version>
 
     <name>univyz</name>
     <description>univyz is a lightweight Java Web Framework and reusable components.</description>
@@ -98,7 +98,6 @@
     </profiles>
 
 
-
     <build>
         <plugins>
             <plugin>
@@ -185,6 +184,19 @@
             <version>2.0.1</version>
         </dependency>
 
-
+        <!--使用JUnit作为单元测试框架-->
+        <!--JUnit-->
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.12</version>
+            <scope>test</scope>
+        </dependency>
+        <!-- CGLib代理 -->
+        <dependency>
+            <groupId>cglib</groupId>
+            <artifactId>cglib</artifactId>
+            <version>2.2.2</version>
+        </dependency>
     </dependencies>
 </project>

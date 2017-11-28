@@ -17,7 +17,6 @@ public class Data {
     public Data(Object model){
         this.model = model;
     }
-
     public Object getModel() {
         return model;
     }

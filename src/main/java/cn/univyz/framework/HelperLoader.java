@@ -1,9 +1,6 @@
 package cn.univyz.framework;
 
-import cn.univyz.framework.helper.BeanHelper;
-import cn.univyz.framework.helper.ClassHelper;
-import cn.univyz.framework.helper.ControllerHelper;
-import cn.univyz.framework.helper.IocHelper;
+import cn.univyz.framework.helper.*;
 import cn.univyz.framework.util.ClassUtil;
 
 /**
@@ -18,11 +15,12 @@ public final class HelperLoader {
         Class<?>[]  classList = new Class[]{
                 ClassHelper.class,
                 BeanHelper.class,
+                AopHelper.class,
                 IocHelper.class,
                 ControllerHelper.class
         };
         for (Class<?> cls : classList){
-            ClassUtil.loadClass(cls.getName());
+            ClassUtil.loadClass(cls.getName(), true);
         }
     }
 }

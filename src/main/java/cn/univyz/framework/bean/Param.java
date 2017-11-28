@@ -11,10 +11,10 @@ import java.util.Map;
  * @author bfy
  * @version 1.0.0
  */
+
 public class Param {
 
     private Map<String, Object> paramMap;
-
     public Param(Map<String, Object> paramMap) {
         this.paramMap = paramMap;
     }

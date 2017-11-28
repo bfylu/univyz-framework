@@ -20,7 +20,6 @@ public class Handler {
      * Action 方法
      */
     private Method actionMethod;
-
     public Handler(Class<?> controllerClass, Method actionMethod){
         this.controllerClass = controllerClass;
         this.actionMethod = actionMethod;
