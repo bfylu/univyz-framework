@@ -16,5 +16,6 @@ public interface ConfigConstant {
     String APP_BASE_PACKAGE="univyz.framework.app.base_package";
     String APP_JSP_PATH="univyz.framework.app.jsp_path";
     String APP_ASSET_PATH = "univyz.framework.app.asset_path";
+    String APP_UPLOAD_LIMIT = "univyz.framework.app.upload_limit";
 
 }

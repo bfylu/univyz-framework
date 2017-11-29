@@ -6,7 +6,7 @@
 
     <groupId>cn.univyz</groupId>
     <artifactId>univyz-framework</artifactId>
-    <version>1.1.5</version>
+    <version>1.2.0</version>
 
     <name>univyz</name>
     <description>univyz is a lightweight Java Web Framework and reusable components.</description>
@@ -197,6 +197,18 @@
             <groupId>cglib</groupId>
             <artifactId>cglib</artifactId>
             <version>2.2.2</version>
+        </dependency>
+        <!--文件上传 Apache Commons FileUpload -->
+        <dependency>
+            <groupId>commons-fileupload</groupId>
+            <artifactId>commons-fileupload</artifactId>
+            <version>1.3.3</version>
+        </dependency>
+        <!-- MD5 -->
+        <dependency>
+            <groupId>commons-codec</groupId>
+            <artifactId>commons-codec</artifactId>
+            <version>1.4</version>
         </dependency>
     </dependencies>
 </project>
