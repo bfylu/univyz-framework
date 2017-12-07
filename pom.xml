@@ -6,7 +6,7 @@
 
     <groupId>cn.univyz</groupId>
     <artifactId>univyz-framework</artifactId>
-    <version>1.2.1</version>
+    <version>1.2.2</version>
 
     <name>univyz</name>
     <description>univyz is a lightweight Java Web Framework and reusable components.</description>
