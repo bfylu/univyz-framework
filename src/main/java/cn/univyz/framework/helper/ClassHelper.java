@@ -1,6 +1,5 @@
 package cn.univyz.framework.helper;
 
-import cn.univyz.framework.annotation.Component;
 import cn.univyz.framework.annotation.Controller;
 import cn.univyz.framework.annotation.Service;
 import cn.univyz.framework.util.ClassUtil;
@@ -12,7 +11,7 @@ import java.util.Set;
 /**
  * 类操作助手类
  * @author bfy
- * @since 1.0.0
+ * @since 1.0.1
  */
 
 public final class ClassHelper {
@@ -34,6 +33,7 @@ public final class ClassHelper {
     public static Set<Class<?>> getClassSet() {
         return CLASS_SET;
     }
+
     /**
      * 获取应用包名下所有 Service 类
      */
@@ -94,20 +94,5 @@ public final class ClassHelper {
         }
         return classSet;
     }
-
-
-    /**
-     * 获取应用包名下所有Spring Bean
-     */
-    public static Set<Class<?>> getSpingBeanClassSet(){
-        Set<Class<?>> classSet = new HashSet<Class<?>>();
-        for (Class<?> cls :CLASS_SET){
-            if (cls.isAnnotationPresent(Component.class)) {
-                classSet.add(cls);
-            }
-        }
-        return classSet;
-    }
-
 
 }

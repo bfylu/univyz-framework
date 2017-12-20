@@ -4,6 +4,7 @@ import cn.univyz.framework.annotation.Aspect;
 import cn.univyz.framework.annotation.Service;
 import cn.univyz.framework.proxy.AspectProxy;
 import cn.univyz.framework.proxy.Proxy;
+import cn.univyz.framework.proxy.ProxyManager;
 import cn.univyz.framework.proxy.TransactionProxy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,19 +27,17 @@ public final class AopHelper {
     static {
         try {
             Map<Class<?>, Set<Class<?>>> proxyMap = createProxyMap();
+            Map<Class<?>, List<Proxy>> targetMap = createTargetMap(proxyMap);
+            for (Map.Entry<Class<?>, List<Proxy>> targetEntry : targetMap.entrySet()){
+                Class<?> targetClass = targetEntry.getKey();
+                List<Proxy> proxyList = targetEntry.getValue();
+                Object proxy = ProxyManager.createProxy(targetClass, proxyList);
+                BeanHelper.setBean(targetClass, proxy);
+
+            }
         }catch (Exception e){
             LOGGER.error("aop failure", e);
         }
-    }
-
-
-    private static Set<Class<?>> createTargetClassSet(Aspect aspect) throws Exception {
-        Set<Class<?>> targetClassSet = new HashSet<Class<?>>();
-        Class<? extends Annotation> annotation = aspect.value();
-        if (annotation != null && !annotation.equals(Aspect.class)) {
-            targetClassSet.addAll(ClassHelper.getClassSetByAnnotation(annotation));
-        }
-        return targetClassSet;
     }
 
     private static Map<Class<?>, Set<Class<?>>> createProxyMap() throws Exception {
@@ -47,6 +46,7 @@ public final class AopHelper {
         addTransactionProxy(proxyMap);
         return proxyMap;
     }
+
 
     private static void addAspectProxy(Map<Class<?>, Set<Class<?>>> proxyMap) throws Exception {
         Set<Class<?>> proxyClassSet = ClassHelper.getClassSetBySuper(AspectProxy.class);
@@ -64,6 +64,14 @@ public final class AopHelper {
         proxyMap.put(TransactionProxy.class, serviceClassSet);
     }
 
+    private static Set<Class<?>> createTargetClassSet(Aspect aspect) throws Exception {
+        Set<Class<?>> targetClassSet = new HashSet<Class<?>>();
+        Class<? extends Annotation> annotation = aspect.value();
+        if (annotation != null && !annotation.equals(Aspect.class)) {
+            targetClassSet.addAll(ClassHelper.getClassSetByAnnotation(annotation));
+        }
+        return targetClassSet;
+    }
 
     //
     private static Map<Class<?>, List<Proxy>> createTargetMap(Map<Class<?>, Set<Class<?>>> proxyMap) throws Exception {

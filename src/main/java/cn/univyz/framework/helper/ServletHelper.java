@@ -39,12 +39,14 @@ public final class ServletHelper {
     public static void init(HttpServletRequest request, HttpServletResponse response) {
         SERVLET_HELPER_HOLDER.set(new ServletHelper(request, response));
     }
+
     /**
      * 销毁
      */
     public static void destroy() {
         SERVLET_HELPER_HOLDER.remove();
     }
+
     /**
      * 获取Request对象
      */
@@ -57,12 +59,14 @@ public final class ServletHelper {
     private static HttpServletResponse getResponse() {
         return SERVLET_HELPER_HOLDER.get().response;
     }
+
     /**
      * 获取Session对象
      */
     private static HttpSession getSession() {
         return getRequest().getSession();
     }
+
     /**
      * 获取ServletContext 对象
      */
@@ -78,6 +82,7 @@ public final class ServletHelper {
     public static void setRequesAttribut(String key, Object value) {
         getRequest().setAttribute(key, value);
     }
+
     /**
      * 从Request 中获取属性
      */
@@ -85,12 +90,14 @@ public final class ServletHelper {
     public static <T> T getRequestAttribut(String key) {
         return (T) getRequest().getAttribute(key);
     }
+
     /**
      * 从Request中移除属性
      */
     public static void removeRequestAttribute(String key){
         getRequest().removeAttribute(key);
     }
+
     /**
      * 发送重定向响应
      */
@@ -101,12 +108,14 @@ public final class ServletHelper {
             LOGGER.error("redirect failure", e);
         }
     }
+
     /**
      * 将属性放入Session 中
      */
     public static void setSessionAttribut(String key, Object value) {
         getSession().setAttribute(key, value);
     }
+
     /**
      * 从Session中获取属性
      */
@@ -114,12 +123,14 @@ public final class ServletHelper {
     public static <T> T getSessionAttribute(String key) {
         return (T) getRequest().getSession().getAttribute(key);
     }
+
     /**
      * 从Session中移除属性
      */
     public static void removeSessionAttribute(String key) {
         getRequest().getSession().removeAttribute(key);
     }
+
     /**
      * 使Session失效
      */

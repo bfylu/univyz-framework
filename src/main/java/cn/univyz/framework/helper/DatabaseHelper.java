@@ -4,9 +4,7 @@ package cn.univyz.framework.helper;
 import cn.univyz.framework.util.CollectionUtil;
 import org.apache.commons.dbcp2.BasicDataSource;
 import org.apache.commons.dbutils.QueryRunner;
-import org.apache.commons.dbutils.handlers.BeanHandler;
-import org.apache.commons.dbutils.handlers.BeanListHandler;
-import org.apache.commons.dbutils.handlers.MapListHandler;
+import org.apache.commons.dbutils.handlers.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,12 +14,12 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * 数据库操作助手类
+ * @author bfy
+ * @version 1.0.1
  */
 public final class DatabaseHelper {
     private static final Logger LOGGER = LoggerFactory.getLogger(DatabaseHelper.class);
@@ -115,22 +113,6 @@ public final class DatabaseHelper {
     }
 
     /**
-     * 查询实体列表
-     */
-    public static <T>List<T>  queryEntityList(Class<T> entityClass, String sql, Object... params){
-        List<T> entityList;
-
-        try{
-            Connection conn=getConnection();
-            entityList = QUERY_RUNNER.query(conn,sql,new BeanListHandler<T>(entityClass),params);
-        }catch (SQLException e){
-            LOGGER.error("query entity list failure",e);
-            throw new RuntimeException(e);
-        }
-        return entityList;
-    }
-
-    /**
      * 查询实体
      */
     public static <T>T queryEntity(Class<T> entityClass,String sql,Object... params){
@@ -147,25 +129,126 @@ public final class DatabaseHelper {
     }
 
     /**
-     * 执行查询语句
+     * 查询实体列表
      */
-    public static List<Map<String,Object>> executeQuery(String sql,Object... params){
-        List<Map<String,Object>> result;
+    public static <T>List<T>  queryEntityList(Class<T> entityClass, String sql, Object... params){
+        List<T> entityList;
+
         try{
-            Connection conn = getConnection();
-            result=QUERY_RUNNER.query(conn,sql,new MapListHandler(),params);
-        }catch (Exception e){
-            LOGGER.error("execute query failure",e);
-            throw new RuntimeException();
+            Connection conn=getConnection();
+            entityList = QUERY_RUNNER.query(conn,sql,new BeanListHandler<T>(entityClass),params);
+        }catch (SQLException e){
+            LOGGER.error("query entity list failure",e);
+            throw new RuntimeException(e);
         }
-        return  result;
+        return entityList;
     }
+
+    /**
+     * 查询并返回单个列值
+     */
+
+    public static <T> T query(String sql, Object... params) {
+        T obj;
+        try {
+            Connection conn  = getConnection();
+            obj = QUERY_RUNNER.query(conn, sql, new ScalarHandler<T>(), params);
+        } catch (SQLException e) {
+            LOGGER.error("query failure", e);
+            throw new RuntimeException(e);
+        }
+        return obj;
+    }
+
+    /**
+     * 查询并返回多个列值
+     */
+    public static <T> List<T> queryList(String sql, Object... params) {
+        List<T> list;
+        try {
+            Connection conn = getConnection();
+            list = QUERY_RUNNER.query(conn, sql, new ColumnListHandler<T>(), params);
+        } catch (SQLException e) {
+            LOGGER.error("query list failure", e);
+            throw new RuntimeException(e);
+        }
+        return list;
+    }
+
+    /**
+     * 查询并返回多个列值（具有唯一性）
+     */
+    public static <T> Set<T> querySet(String sql, Object... params) {
+        Collection<T> valueList = queryList(sql, params);
+        return new LinkedHashSet<T>(valueList);
+    }
+
+    /**
+     * 查询并返回数组
+     */
+    public static Object[] queryArray(String sql, Object... params) {
+        Object[] resultArray;
+        try {
+            Connection conn = getConnection();
+            resultArray = QUERY_RUNNER.query(conn, sql, new ArrayHandler(), params);
+        } catch (SQLException e) {
+            LOGGER.error("query array failure", e);
+            throw new RuntimeException(e);
+        }
+        return resultArray;
+    }
+
+    /**
+     * 查询并返回数组列表
+     */
+    public static List<Object[]> queryArrayList(String sql, Object... params) {
+        List<Object[]> resultArrayList;
+        try {
+            Connection conn = getConnection();
+            resultArrayList = QUERY_RUNNER.query(conn, sql, new ArrayListHandler(), params);
+        } catch (SQLException e) {
+            LOGGER.error("query array list failure", e);
+            throw new RuntimeException(e);
+        }
+        return resultArrayList;
+    }
+
+    /**
+     * 查询并返回结果集映射（列名 => 列值）
+     */
+    public static Map<String, Object> queryMap(String sql, Object... params) {
+        Map<String, Object> resultMap;
+        try {
+            Connection conn = getConnection();
+            resultMap = QUERY_RUNNER.query(conn, sql, new MapHandler(), params);
+        } catch (SQLException e) {
+            LOGGER.error("query map failure", e);
+            throw new RuntimeException(e);
+        }
+        return resultMap;
+    }
+
+    /**
+     * 查询并返回结果集映射列表（列名 => 列值）
+     */
+    public static List<Map<String, Object>> queryMapList(String sql, Object... params) {
+        List<Map<String, Object>> resultMapList;
+        try {
+            Connection conn = getConnection();
+            resultMapList = QUERY_RUNNER.query(conn, sql, new MapListHandler(), params);
+        } catch (SQLException e) {
+            LOGGER.error("query map list failure", e);
+            throw new RuntimeException(e);
+        }
+        return resultMapList;
+    }
+
 
     /**
      * 执行更新语句（包括update,insert,delete）
      */
-    public static int executeUpdate(String sql,Object... params){
-        int rows=0;
+    public static int update(String sql,Object... params){
+        int rows;
         try{
             Connection conn = getConnection();
             rows=QUERY_RUNNER.update(conn,sql,params);
@@ -198,7 +281,7 @@ public final class DatabaseHelper {
         values.replace(values.lastIndexOf(", "), values.length(), ")");
         sql += columns + " VALUES " + values;
         Object[] params =fieldMap.values().toArray();
-        return executeUpdate(sql,params) == 1;
+        return update(sql,params) == 1;
 
     }
 
@@ -223,7 +306,7 @@ public final class DatabaseHelper {
         Object[] params = paramList.toArray();
 
 
-        return executeUpdate(sql,params) == 1;
+        return update(sql,params) == 1;
     }
 
     /**
@@ -232,7 +315,7 @@ public final class DatabaseHelper {
     public static <T> boolean deleteEntity(Class<T> entityClass, long id){
         String sql="DELETE FROM " + getTableName(entityClass) + " WHERE id=?";
 
-        return executeUpdate(sql,id) ==1;
+        return update(sql,id) ==1;
     }
 
     /**
@@ -247,7 +330,7 @@ public final class DatabaseHelper {
 
         try {
             while((sql=reader.readLine()) !=null){
-                executeUpdate(sql);
+                update(sql);
             }
         }catch (Exception e){
             LOGGER.error("execute sql file failure", e);
