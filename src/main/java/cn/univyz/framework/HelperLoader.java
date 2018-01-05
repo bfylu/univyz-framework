@@ -2,6 +2,7 @@ package cn.univyz.framework;
 
 import cn.univyz.framework.helper.*;
 import cn.univyz.framework.util.ClassUtil;
+import cn.univyz.framework.util.CollectionUtil;
 
 /**
  * 加载相应的 Helper 类
@@ -9,18 +10,21 @@ import cn.univyz.framework.util.ClassUtil;
  * @author bfy
  * @version 1.0.0
  */
-public final class HelperLoader {
+public final class HelperLoader  {
 
     public static void init() {
-        Class<?>[]  classList = new Class[]{
+
+        Class<?>[]  classList = {
                 ClassHelper.class,
                 BeanHelper.class,
                 AopHelper.class,
                 IocHelper.class,
+                CollectionUtil.class,
                 ControllerHelper.class
         };
         for (Class<?> cls : classList){
-            ClassUtil.loadClass(cls.getName(), true);
+            System.out.println("类的路径:"+ cls.getName());
+            ClassUtil.loadClass(cls.getName());
         }
     }
 }

@@ -8,6 +8,7 @@ package cn.univyz.framework;
 public interface ConfigConstant {
 
     String CONFIG_FILE = "univyz.properties";
+
     String JDBC_DRIVER = "univyz.framework.jdbc.driver";
     String JDBC_URL="univyz.framework.jdbc.url";
     String JDBC_USERNAME="univyz.framework.jdbc.username";

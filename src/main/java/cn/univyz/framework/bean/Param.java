@@ -14,7 +14,7 @@ import java.util.Map;
  * 请求参数对象
  *
  * @author bfy
- * @version 1.0.1
+ * @version 1.0.2
  */
 
 public class Param {
@@ -43,6 +43,7 @@ public class Param {
                 if (fieldMap.containsKey(fieldName)){
                     fieldValue = fieldMap.get(fieldName) + StringUtil.SEPARATOR + fieldValue;
                 }
+                fieldMap.put(fieldName, fieldValue);
             }
         }
         return fieldMap;

@@ -30,6 +30,7 @@ import java.util.Map;
  *
  */
 public class UploadHelper {
+
     private static final Logger LOGGER = LoggerFactory.getLogger(UploadHelper.class);
 
     /**

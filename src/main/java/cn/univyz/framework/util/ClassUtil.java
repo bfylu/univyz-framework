@@ -1,8 +1,8 @@
 package cn.univyz.framework.util;
 
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 
 import java.io.File;
 import java.io.FileFilter;
@@ -14,9 +14,6 @@ import java.util.Set;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
-import static com.sun.org.apache.bcel.internal.Repository.addClass;
-
-
 /**
  * 类操作工具类
  *
@@ -24,8 +21,8 @@ import static com.sun.org.apache.bcel.internal.Repository.addClass;
  * @since 1.0.0
  */
 public final class ClassUtil {
-    private static final Logger LOGGER = LoggerFactory.getLogger(ClassUtil.class);
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(ClassUtil.class);
     /**
      * 获取加载器
      */
@@ -39,8 +36,13 @@ public final class ClassUtil {
     public static Class<?> loadClass(String className,boolean isInitialized){
         Class<?> cls;
             try {
+                System.out.println("ClassUtil---loadClass---2:" + className);
+
                 cls = Class.forName(className, isInitialized, getClassLoader());
+
+                System.out.println("ClassUtil---loadClass---4:" + className);
             } catch (ClassNotFoundException e) {
+                System.out.println("ClassUtil---loadClass---3:");
                 LOGGER.error("load class failure" ,e);
                 throw new RuntimeException(e);
             }
@@ -51,6 +53,7 @@ public final class ClassUtil {
      * 加载类（默认将初始化类）
      */
     public static Class<?> loadClass(String className){
+        System.out.println("ClassUtil---loadClass---1:" + className);
         return loadClass(className,true);
     }
     /**
@@ -65,12 +68,14 @@ public final class ClassUtil {
                 if (url != null){
                     String protocol = url.getProtocol();
                     if (protocol.equals("file")){
-                        String packagePath = url.getPath().replaceAll("%20","");
+                        String packagePath = url.getPath().replaceAll("%20"," ");
                         addClass(classesSet,packagePath,packageName);
                     } else if (protocol.equals("jar")){
                         JarURLConnection jarURLConnection = (JarURLConnection) url.openConnection();
+                        url.openConnection();
                         if (jarURLConnection != null){
                             JarFile jarFile = jarURLConnection.getJarFile();
+
                             if (jarFile !=null){
                                 Enumeration<JarEntry> jarEntries = jarFile.entries();
                                 while (jarEntries.hasMoreElements()){
@@ -111,7 +116,7 @@ public final class ClassUtil {
                     className = packageName + "." + className;
                 }
                 doAddClass(classesSet, className);
-            }else {
+            } else {
                 String subPackagePath = fileName;
                 if (StringUtil.isNotEmpty(packagePath)){
                     subPackagePath = packagePath + "/" + subPackagePath;

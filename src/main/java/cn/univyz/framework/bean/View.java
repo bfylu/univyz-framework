@@ -36,7 +36,7 @@ public class View {
         return path;
     }
 
-    public Map<String,Object> getModel(){
+    public Map<String, Object> getModel(){
         return model;
     }
 }

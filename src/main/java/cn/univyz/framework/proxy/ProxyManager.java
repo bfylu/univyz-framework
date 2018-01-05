@@ -12,9 +12,9 @@ import java.util.List;
  * 代理管理器
  *
  * @author byf
- * @version
+ * @version 1.0.0
  */
-public class ProxyManager {
+public class ProxyManager{
     @SuppressWarnings("unchecked")
     public static <T> T createProxy(final  Class<?> targetClass, final List<Proxy> proxyList) {
         //使用CGLib提供的Enhancer#create 方法来创建代理对象，

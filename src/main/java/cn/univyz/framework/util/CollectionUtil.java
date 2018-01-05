@@ -6,6 +6,8 @@ import java.util.Collection;
 import java.util.Map;
 
 public final class CollectionUtil {
+
+
     /**
      * 判断Collection 是否为空
      */

@@ -26,6 +26,7 @@ public final class DatabaseHelper {
     private static final QueryRunner QUERY_RUNNER;
     private static final ThreadLocal<Connection> CONNECTION_HOLDER;
     private static final BasicDataSource DATA_SOURCE;
+
     static {
         CONNECTION_HOLDER = new ThreadLocal<Connection>();
         QUERY_RUNNER = new QueryRunner();
@@ -47,13 +48,15 @@ public final class DatabaseHelper {
      */
     public  static Connection getConnection() {
         Connection conn = CONNECTION_HOLDER.get();
-        try{
-            conn= DATA_SOURCE.getConnection();
-        }catch (SQLException e){
-            LOGGER.error("get connection failure",e);
-            throw new RuntimeException(e);
-        }finally {
-            CONNECTION_HOLDER.set(conn);
+        if (conn == null){
+            try{
+                conn= DATA_SOURCE.getConnection();
+            }catch (SQLException e){
+                LOGGER.error("get connection failure",e);
+                throw new RuntimeException(e);
+            }finally {
+                CONNECTION_HOLDER.set(conn);
+            }
         }
         return conn;
     }

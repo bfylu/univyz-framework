@@ -23,65 +23,79 @@ import java.lang.reflect.Method;
 import java.util.Map;
 
 
-/**
- * 请求转发器
- *
- * @author bfy
- * @version 1.0.0
- */
 @WebServlet(urlPatterns = "/*", loadOnStartup = 0)
-public class DispatcherServlet extends HttpServlet {
+public class DispatcherServlet extends HttpServlet{
 
     @Override
-    public void init(ServletConfig servletConfig) throws ServletException {
-        //初始化相关 Helper 类
-        HelperLoader.init();
-        // 获取 ServletContext 对象（用于注册 Servlet）
-        ServletContext servletContext = servletConfig.getServletContext();
+    public void init(ServletConfig servletConfig) {
+            System.out.println("DispatcherServlet001---------->>>" +servletConfig.getServletName());
+            HelperLoader.init();
+            // 获取 ServletContext 对象（用于注册 Servlet）
+            ServletContext servletContext = servletConfig.getServletContext();
+            registerServlet(servletContext);
+            UploadHelper.init(servletContext);
+    }
+
+    private void registerServlet(ServletContext servletContext) {
+        ConfigHelper configHelper = new ConfigHelper();
+        System.out.println("DispatcherServlet002----------0>>>");
         //注册处理 JSP 的 Servlet
         ServletRegistration jspServlet = servletContext.getServletRegistration("jsp");
-        jspServlet.addMapping(ConfigHelper.getAppJspPath() + "*");
+        jspServlet.addMapping("/index.jsp");
+        System.out.println("DispatcherServlet002----------2>>>");
+        jspServlet.addMapping(configHelper.getAppJspPath() + "*");
+        System.out.println("DispatcherServlet002---------->>>3"+configHelper.getAppJspPath());
         //注册处理静态资源的默认 Servlet
         ServletRegistration defaultServlet = servletContext.getServletRegistration("default");
+        //defaultServlet.addMapping("/favicon.ico");
         defaultServlet.addMapping(ConfigHelper.getAppAssetPath() + "*");
-
-        UploadHelper.init(servletContext);
     }
 
     @Override
     protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         ServletHelper.init(request, response);
+        System.out.println("DispatcherServlet003---------->>>");
         try {
             // 获取请求方法与请求路径
             String requestMethod = request.getMethod().toLowerCase();
+            System.out.println("DispatcherServlet003--请求方法-------->>>"+requestMethod);
             String requestPath = request.getPathInfo();
-            if (requestPath.equals("/favicon.ico")){
-                return;
-            }
+            System.out.println("DispatcherServlet003---请求路径------->>>"+requestPath);
+
             // 获取 Action 处理器
             Handler handler = ControllerHelper.getHandler(requestMethod,requestPath);
+            System.out.println("DispatcherServlet003---Action 处理器------->>>");
             if (handler != null) {
                 // 获取 Controller 类及其 Bean 实例
+
                 Class<?> controllerClass = handler.getControllerClass();
+                System.out.println("DispatcherServlet003---BeanHelper------->>>");
                 Object controllerBean = BeanHelper.getBean(controllerClass);
                 //创建请求参数对象
                 Param param;
+                System.out.println("DispatcherServlet003---创建请求参数对象------->>>");
                 if (UploadHelper.isMultipart(request)){
+                    System.out.println("DispatcherServlet003---创建请求参数对象1------->>>");
                     param = UploadHelper.createParam(request);
                 }else {
+                    System.out.println("DispatcherServlet003---创建请求参数对象2------->>>");
                     param = RequestHelper.createParam(request);
                 }
 
                 Object result;
                 Method actionMethod = handler.getActionMethod();
+                System.out.println("DispatcherServlet003---actionMethod------->>>");
                 if (param.isEmpty()) {
+                    System.out.println("DispatcherServlet003---actionMethod--1------->>>");
                     result = ReflectionUtil.invokeMethod(controllerBean, actionMethod);
                 }else {
+                    System.out.println("DispatcherServlet003---actionMethod--2------->>>");
                     result = ReflectionUtil.invokeMethod(controllerBean, actionMethod, param);
                 }
 
                 if (result instanceof View) {
-                    handleViewResult((View) result, request, response );
+                    View view = (View) result;
+                    handleViewResult(view, request, response );
                 } else  if (result instanceof Data) {
                     handleDataResult((Data) result, response);
                 }
@@ -91,8 +105,11 @@ public class DispatcherServlet extends HttpServlet {
         }
     }
 
+    //返回JSP页面
     private void handleViewResult(View view, HttpServletRequest request,HttpServletResponse response) throws IOException, ServletException {
+        System.out.println("DispatcherServlet004---------->>>");
         String path = view.getPath();
+        System.out.println("DispatherServlet-----view-->"+view.getPath());
         if (StringUtil.isNotEmpty(path)) {
             if (path.startsWith("/"))
                 response.sendRedirect(request.getContextPath() + path);
@@ -102,9 +119,11 @@ public class DispatcherServlet extends HttpServlet {
                 request.setAttribute(entry.getKey(), entry.getValue());
             }
             request.getRequestDispatcher(ConfigHelper.getAppJspPath() + path).forward(request, response);
+            System.out.println("DispatcherServlet--JSP2----->" +ConfigHelper.getAppJspPath() + path+" request "+ request);
         }
     }
 
+    //返回JSON数据
     private void handleDataResult(Data data, HttpServletResponse response) throws IOException {
         Object model = data.getModel();
         if (model != null){

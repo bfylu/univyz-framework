@@ -8,8 +8,8 @@ package cn.univyz.framework.bean;
  * @version 1.0.0
  */
 public class FormParam {
-
-    private String fieldName; //文件表单的字段名()
+    //文件表单的字段名()
+    private String fieldName;
     private Object filedValue;
 
     public FormParam(String fieldName, Object filedValue) {
